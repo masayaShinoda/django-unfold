@@ -13,6 +13,7 @@ from django.contrib.admin.widgets import (
     AdminTextareaWidget,
     AdminTextInputWidget,
     AdminTimeWidget,
+    AdminURLFieldWidget,
     AdminUUIDInputWidget,
     ForeignKeyRawIdWidget,
     RelatedFieldWidgetWrapper,
@@ -20,6 +21,7 @@ from django.contrib.admin.widgets import (
 from django.db.models.fields.reverse_related import ForeignObjectRel
 from django.forms import (
     CheckboxInput,
+    CheckboxSelectMultiple,
     MultiWidget,
     NullBooleanSelect,
     NumberInput,
@@ -33,18 +35,19 @@ from .exceptions import UnfoldException
 
 LABEL_CLASSES = [
     "block",
-    "font-medium",
+    "font-semibold",
     "mb-2",
-    "text-gray-900",
+    "text-font-important-light",
     "text-sm",
-    "dark:text-gray-100",
+    "dark:text-font-important-dark",
 ]
 
 CHECKBOX_LABEL_CLASSES = [
+    "font-semibold",
     "ml-2",
     "text-sm",
-    "text-gray-900",
-    "dark:text-gray-100",
+    "text-font-important-light",
+    "dark:text-font-important-dark",
 ]
 
 BASE_CLASSES = [
@@ -54,7 +57,7 @@ BASE_CLASSES = [
     "min-w-20",
     "rounded-md",
     "shadow-sm",
-    "text-gray-500",
+    "text-font-default-light",
     "text-sm",
     "focus:ring",
     "focus:ring-primary-300",
@@ -64,7 +67,7 @@ BASE_CLASSES = [
     "group-[.errors]:focus:ring-red-200",
     "dark:bg-gray-900",
     "dark:border-gray-700",
-    "dark:text-gray-300",
+    "dark:text-font-default-dark",
     "dark:focus:border-primary-600",
     "dark:focus:ring-primary-700",
     "dark:focus:ring-opacity-50",
@@ -253,6 +256,13 @@ class UnfoldAdminTextInputWidget(AdminTextInputWidget):
         super().__init__(attrs={"class": " ".join(INPUT_CLASSES), **(attrs or {})})
 
 
+class UnfoldAdminURLInputWidget(AdminURLFieldWidget):
+    template_name = "unfold/widgets/url.html"
+
+    def __init__(self, attrs: Optional[Dict[str, Any]] = None) -> None:
+        super().__init__(attrs={"class": " ".join(INPUT_CLASSES), **(attrs or {})})
+
+
 class UnfoldAdminColorInputWidget(AdminTextInputWidget):
     def __init__(self, attrs: Optional[Dict[str, Any]] = None) -> None:
         super().__init__(
@@ -322,6 +332,8 @@ class UnfoldAdminImageSmallFieldWidget(FileFieldMixin, AdminFileWidget):
 
 
 class UnfoldAdminDateWidget(AdminDateWidget):
+    template_name = "unfold/widgets/date.html"
+
     def __init__(
         self, attrs: Optional[Dict[str, Any]] = None, format: Optional[str] = None
     ) -> None:
@@ -348,6 +360,8 @@ class UnfoldAdminSingleDateWidget(AdminDateWidget):
 
 
 class UnfoldAdminTimeWidget(AdminTimeWidget):
+    template_name = "unfold/widgets/time.html"
+
     def __init__(
         self, attrs: Optional[Dict[str, Any]] = None, format: Optional[str] = None
     ) -> None:
@@ -511,6 +525,16 @@ class UnfoldAdminRadioSelectWidget(AdminRadioSelect):
         context = super().get_context(*args, **kwargs)
         context.update({"radio_style": self.radio_style})
         return context
+
+
+class UnfoldAdminCheckboxSelectMultiple(CheckboxSelectMultiple):
+    template_name = "unfold/widgets/radio.html"
+    option_template_name = "unfold/widgets/radio_option.html"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.attrs = {"class": " ".join(CHECKBOX_CLASSES)}
 
 
 try:

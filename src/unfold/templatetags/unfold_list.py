@@ -50,22 +50,20 @@ ROW_CLASSES = [
     "px-3",
     "py-2",
     "text-left",
-    "text-sm",
     "before:flex",
     "before:capitalize",
     "before:content-[attr(data-label)]",
     "before:items-center",
     "before:font-semibold",
+    "before:text-font-important-light",
     "before:mr-auto",
-    "before:text-gray-900",
     "first:border-t-0",
-    "dark:text-gray-300",
-    "dark:before:text-gray-100",
     "lg:before:hidden",
     "lg:first:border-t",
     "lg:py-3",
     "lg:table-cell",
     "dark:border-gray-800",
+    "dark:before:text-font-important-dark",
 ]
 
 CHECKBOX_CLASSES = [
@@ -76,19 +74,18 @@ CHECKBOX_CLASSES = [
     "px-3",
     "py-2",
     "text-left",
-    "text-sm",
     "before:block",
     "before:capitalize",
     "before:content-[attr(data-label)]",
     "before:font-semibold",
     "before:mr-auto",
-    "before:text-gray-900",
+    "before:text-font-important-light",
     "lg:before:hidden",
     "lg:border-t",
     "lg:border-gray-200",
     "lg:table-cell",
-    "dark:before:text-gray-100",
     "dark:lg:border-gray-800",
+    "dark:before:text-font-important-dark",
 ]
 
 
@@ -376,6 +373,7 @@ def result_list(context: Dict[str, Any], cl: ChangeList) -> Dict[str, Any]:
         "num_sorted_fields": num_sorted_fields,
         "results": list(results(cl)),
         "actions_row": context.get("actions_row"),
+        "has_add_permission": cl.model_admin.has_add_permission(context["request"]),
     }
 
 

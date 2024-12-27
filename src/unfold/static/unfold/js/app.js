@@ -1,6 +1,4 @@
 window.addEventListener("load", (e) => {
-  submitSearch();
-
   fileInputUpdatePath();
 
   dateTimeShortcutsOverlay();
@@ -11,6 +9,21 @@ window.addEventListener("load", (e) => {
 
   warnWithoutSaving();
 });
+
+/*************************************************************
+ * Alpine.sort.js callback after sorting
+ *************************************************************/
+const sortRecords = (e) => {
+  const orderingField = e.from.dataset.orderingField;
+
+  const weightInputs = Array.from(
+    e.from.querySelectorAll(`.has_original input[name$=-${orderingField}]`)
+  );
+
+  weightInputs.forEach((input, index) => {
+    input.value = index;
+  });
+};
 
 /*************************************************************
  * Warn without saving
@@ -120,62 +133,33 @@ const dateTimeShortcutsOverlay = () => {
  * File upload path
  *************************************************************/
 const fileInputUpdatePath = () => {
-  Array.from(document.querySelectorAll("input[type=file]")).forEach((input) => {
-    input.addEventListener("change", (e) => {
-      const parts = e.target.value.split("\\");
-      const placeholder =
-        input.parentNode.parentNode.querySelector("input[type=text]");
-      placeholder.setAttribute("value", parts[parts.length - 1]);
-    });
-  });
-};
+  const checkInputChanged = () => {
+    for (const input of document.querySelectorAll("input[type=file]")) {
+      if (input.hasChangeListener) {
+        continue;
+      }
 
-/*************************************************************
- * Search form on changelist view
- *************************************************************/
-const submitSearch = () => {
-  const searchbar = document.getElementById("searchbar");
-  const searchbarSubmit = document.getElementById("searchbar-submit");
+      input.addEventListener("change", (e) => {
+        const parts = e.target.value.split("\\");
+        const placeholder =
+          input.parentNode.parentNode.parentNode.querySelector(
+            "input[type=text]"
+          );
+        placeholder.setAttribute("value", parts[parts.length - 1]);
+      });
 
-  const getQueryParams = (searchString) => {
-    const queryParams = window.location.search
-      .replace("?", "")
-      .split("&")
-      .map((param) => param.split("="))
-      .reduce((values, [key, value]) => {
-        if (key && key !== "q") {
-          values[key] = value;
-        }
-
-        return values;
-      }, {});
-
-    if (searchString) {
-      queryParams["q"] = searchString;
+      input.hasChangeListener = true;
     }
-
-    const result = Object.entries(queryParams)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("&");
-
-    return `?${result}`;
   };
 
-  if (searchbar !== null) {
-    searchbar.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        window.location = getQueryParams(e.target.value);
-        e.preventDefault();
-      }
-    });
-  }
+  new MutationObserver(() => {
+    checkInputChanged();
+  }).observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
 
-  if (searchbarSubmit !== null && searchbar !== null) {
-    searchbarSubmit.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.location = getQueryParams(searchbar.value);
-    });
-  }
+  checkInputChanged();
 };
 
 /*************************************************************

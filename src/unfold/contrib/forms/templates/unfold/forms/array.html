@@ -14,7 +14,7 @@
     {% endfor %}
 
     <template x-for="(item, index) in items" :key="item.key">
-        <div class="flex flex-row">
+        <div class="flex flex-row" x-init="if ($el.getElementsByTagName('input')[0].name.includes('__prefix__')) { $el.getElementsByTagName('input')[0].name = $el.parentElement.getElementsByTagName('input')[0].name }">
             {% with widget=template %}
                 {% include template.template_name %}
             {% endwith %}
@@ -26,7 +26,7 @@
     </template>
 
     <div class="flex flex-row">
-        <div x-on:click="items.push({ key: new Date().getTime()})" class="bg-primary-600 border border-transparent cursor-pointer font-medium inline-block px-3 py-2 rounded-md text-sm text-white w-full lg:w-auto">
+        <div x-on:click="items.push({ key: new Date().getTime()})" class="bg-primary-600 border border-transparent cursor-pointer font-medium inline-block px-3 py-2 rounded-md text-center text-sm text-white w-full lg:w-auto">
             {% trans "Add new item" %}
         </div>
     </div>

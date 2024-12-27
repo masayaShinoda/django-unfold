@@ -5,6 +5,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        font: {
+          "subtle-light": "rgb(var(--color-font-subtle-light) / <alpha-value>)",
+          "subtle-dark": "rgb(var(--color-font-subtle-dark) / <alpha-value>)",
+          "default-light":
+            "rgb(var(--color-font-default-light) / <alpha-value>)",
+          "default-dark": "rgb(var(--color-font-default-dark) / <alpha-value>)",
+          "important-light":
+            "rgb(var(--color-font-important-light) / <alpha-value>)",
+          "important-dark":
+            "rgb(var(--color-font-important-dark) / <alpha-value>)",
+        },
         primary: {
           50: "rgb(var(--color-primary-50) / <alpha-value>)",
           100: "rgb(var(--color-primary-100) / <alpha-value>)",
@@ -27,6 +38,10 @@ module.exports = {
         sans: ["Inter", "sans-serif"],
       },
       height: {
+        4.5: "1.125rem",
+        9.5: "2.375rem",
+      },
+      minHeight: {
         9.5: "2.375rem",
       },
       minWidth: {
@@ -61,12 +76,24 @@ module.exports = {
     "md:border-r",
     "md:w-48",
     {
+      pattern: /col-span-+/,
+      variants: ["md", "lg"],
+    },
+    {
+      pattern: /grid-cols-+/,
+      variants: ["md", "lg"],
+    },
+    {
       pattern: /gap-+/,
-      variants: ["lg"],
+      variants: ["md", "lg"],
+    },
+    {
+      pattern: /bg-(primary)-(50|100|200|300|400|500|600|700|800|900|950)/,
+      variants: ["dark"],
     },
     {
       pattern: /w-(1\/2|1\/3|2\/3|1\/4|2\/4|3\/4|1\/5|2\/5|3\/5|4\/5)/,
-      variants: ["lg"],
+      variants: ["md", "lg"],
     },
   ],
 };

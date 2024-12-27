@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-unfold"
-version = "0.37.0"
+version = "0.43.0"
 description = "Modern Django admin theme for seamless interface development"
 license = "MIT"
 readme = "README.md"
@@ -16,6 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
@@ -27,17 +28,18 @@ python = ">=3.8"
 django = ">=3.2"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^7.3.1"
-pytest-django = "^4.5.2"
-tox = "^4.5.2"
+pytest = "^8.3"
+pytest-django = "^4.9"
+tox = "^4.21"
 
 
 [tool.poetry.group.dev.dependencies]
-python-semantic-release = "^8.7.0"
+python-semantic-release = "^8.7"
 
 [tool.ruff]
 fix = true
 line-length = 88
+target-version = "py38"
 
 [tool.ruff.lint]
 select = [
@@ -89,7 +91,7 @@ legacy_tox_ini = """
     [tox]
     isolated_build = true
     envlist =
-        python{38,39,310,311,312}-django{32,41,42,50,51}
+        python{38,39,310,311,312,313}-django{32,41,42,50,51}
 
     [testenv]
     skip_install = true

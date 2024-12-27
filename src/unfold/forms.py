@@ -10,9 +10,14 @@ from django.contrib.admin.forms import (
 from django.contrib.auth.forms import (
     AdminPasswordChangeForm as BaseAdminPasswordChangeForm,
 )
+from django.contrib.auth.models import User
+
+try:
+    from django.contrib.auth.forms import AdminUserCreationForm as BaseUserCreationForm
+except ImportError:
+    from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.forms import ReadOnlyPasswordHashWidget
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
-from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.http import HttpRequest
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -20,7 +25,6 @@ from django.utils.translation import gettext_lazy as _
 from .widgets import (
     BASE_INPUT_CLASSES,
     INPUT_CLASSES,
-    SELECT_CLASSES,
     UnfoldAdminPasswordInput,
     UnfoldAdminRadioSelectWidget,
 )
@@ -35,7 +39,19 @@ class ActionForm(forms.Form):
         label="",
         widget=forms.Select(
             {
-                "class": " ".join([*SELECT_CLASSES, "max-w-full", "lg:!w-64"]),
+                "class": " ".join(
+                    [
+                        "appearance-none",
+                        "bg-white/20",
+                        "font-medium",
+                        "grow",
+                        "px-3",
+                        "py-2",
+                        "pr-8",
+                        "rounded-md",
+                        "lg:min-w-72",
+                    ]
+                ),
                 "aria-label": _("Select action to run"),
                 "x-model": "action",
             }
@@ -66,11 +82,10 @@ class AuthenticationForm(AdminAuthenticationForm):
 class UserCreationForm(BaseUserCreationForm):
     def __init__(
         self,
-        request: Optional[HttpRequest] = None,
         *args,
         **kwargs,
     ) -> None:
-        super().__init__(request, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields["password1"].widget = UnfoldAdminPasswordInput(
             attrs={"autocomplete": "new-password"}
@@ -88,11 +103,10 @@ class UserCreationForm(BaseUserCreationForm):
 class UserChangeForm(BaseUserChangeForm):
     def __init__(
         self,
-        request: Optional[HttpRequest] = None,
         *args,
         **kwargs,
     ) -> None:
-        super().__init__(request, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["password"].widget = UnfoldReadOnlyPasswordHashWidget()
 
         self.fields["password"].help_text = _(
@@ -109,19 +123,19 @@ class UserChangeForm(BaseUserChangeForm):
 class AdminPasswordChangeForm(BaseAdminPasswordChangeForm):
     def __init__(
         self,
-        request: Optional[HttpRequest] = None,
+        user: User,
         *args,
         **kwargs,
     ) -> None:
-        super().__init__(request, *args, **kwargs)
+        super().__init__(user, *args, **kwargs)
 
         self.fields["password1"].widget.attrs["class"] = " ".join(INPUT_CLASSES)
         self.fields["password2"].widget.attrs["class"] = " ".join(INPUT_CLASSES)
 
 
 class AdminOwnPasswordChangeForm(BaseAdminOwnPasswordChangeForm):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(kwargs.pop("user"), *args, **kwargs)
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(user, *args, **kwargs)
 
         self.fields["old_password"].widget.attrs["class"] = " ".join(INPUT_CLASSES)
         self.fields["new_password1"].widget.attrs["class"] = " ".join(INPUT_CLASSES)
